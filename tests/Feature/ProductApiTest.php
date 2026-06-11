@@ -11,6 +11,7 @@ test('products can be listed with active promotion data', function (): void {
     $product = Product::factory()->create([
         'name' => 'Featured Coffee',
         'sku' => 'FEATURED-001',
+        'price' => 100,
     ]);
 
     ProductPromotion::factory()
@@ -19,6 +20,7 @@ test('products can be listed with active promotion data', function (): void {
             'promotion' => 'Launch discount',
             'promotion_started_at' => now()->subDay(),
             'promotion_ends_at' => now()->addDay(),
+            'discount_percentage' => 20,
         ]);
 
     $this->getJson('/api/products')
@@ -26,7 +28,11 @@ test('products can be listed with active promotion data', function (): void {
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.0.sku', 'FEATURED-001')
         ->assertJsonPath('data.0.has_active_promotion', true)
-        ->assertJsonPath('data.0.active_promotion.promotion', 'Launch discount');
+        ->assertJsonPath('data.0.discount_percentage', '20.00')
+        ->assertJsonPath('data.0.discounted_price', '80.00')
+        ->assertJsonPath('data.0.final_price', '80.00')
+        ->assertJsonPath('data.0.active_promotion.promotion', 'Launch discount')
+        ->assertJsonPath('data.0.active_promotion.discount_percentage', '20.00');
 });
 
 test('products can be filtered by active supplier relationship', function (): void {

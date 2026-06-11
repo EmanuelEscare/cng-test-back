@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $currency
  * @property bool|null $has_active_promotion
  * @property-read ProductPromotion|null $activePromotion
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, OrderProduct> $orderItems
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Order> $orders
  * @property-read \Illuminate\Database\Eloquent\Collection<int, ProductPromotion> $promotions
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Supplier> $suppliers
  */
@@ -57,6 +59,24 @@ class Product extends Model
     public function promotions(): HasMany
     {
         return $this->hasMany(ProductPromotion::class);
+    }
+
+    /**
+     * Get the order product pivot records.
+     */
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderProduct::class);
+    }
+
+    /**
+     * Get the orders where the product was sold.
+     */
+    public function orders(): BelongsToMany
+    {
+        return $this->belongsToMany(Order::class)
+            ->using(OrderProduct::class)
+            ->withPivot(['sold_at', 'quantity']);
     }
 
     /**

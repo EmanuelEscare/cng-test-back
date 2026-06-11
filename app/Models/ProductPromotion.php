@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $promotion_started_at
  * @property \Illuminate\Support\Carbon|null $promotion_ends_at
  * @property string|null $promotion
+ * @property string $discount_percentage
  * @property-read Product $product
  *
  * @method static Builder<static> active()
@@ -33,6 +34,7 @@ class ProductPromotion extends Model
         'promotion_started_at',
         'promotion_ends_at',
         'promotion',
+        'discount_percentage',
     ];
 
     /**
@@ -45,6 +47,7 @@ class ProductPromotion extends Model
         return [
             'promotion_started_at' => 'datetime',
             'promotion_ends_at' => 'datetime',
+            'discount_percentage' => 'decimal:2',
         ];
     }
 
@@ -74,7 +77,8 @@ class ProductPromotion extends Model
                 $query
                     ->whereNull('promotion_ends_at')
                     ->orWhere('promotion_ends_at', '>=', now());
-            });
+            })
+            ->where('discount_percentage', '>', 0);
     }
 
     /**
@@ -83,6 +87,7 @@ class ProductPromotion extends Model
     public function isActive(): bool
     {
         return ($this->promotion_started_at === null || $this->promotion_started_at->lte(now()))
-            && ($this->promotion_ends_at === null || $this->promotion_ends_at->gte(now()));
+            && ($this->promotion_ends_at === null || $this->promotion_ends_at->gte(now()))
+            && (float) $this->discount_percentage > 0;
     }
 }
