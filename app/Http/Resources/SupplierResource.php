@@ -27,6 +27,8 @@ class SupplierResource extends JsonResource
             'city' => $this->city,
             'state' => $this->state,
             'postal_code' => $this->postal_code,
+            'products_count' => $this->whenCounted('products'),
+            'active_products_count' => $this->whenCounted('active_products'),
             'is_active_for_product' => $this->whenPivotLoaded(
                 'product_supplier',
                 fn (): bool => (bool) $this->pivot->is_active,

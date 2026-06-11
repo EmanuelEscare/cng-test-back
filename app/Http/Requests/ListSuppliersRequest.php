@@ -2,22 +2,14 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Validation\Rule;
-
-class ListProductsRequest extends ApiFormRequest
+class ListSuppliersRequest extends ApiFormRequest
 {
     /**
      * Prepare the data for validation.
      */
     protected function prepareForValidation(): void
     {
-        if ($this->filled('direction')) {
-            $this->merge([
-                'direction' => strtolower((string) $this->input('direction')),
-            ]);
-        }
-
-        $this->normalizeBoolean('is_active');
+        $this->normalizeBoolean('has_products');
     }
 
     /**
@@ -29,11 +21,7 @@ class ListProductsRequest extends ApiFormRequest
     {
         return [
             'search' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'is_active' => ['sometimes', 'boolean'],
-            'supplier_id' => ['sometimes', 'integer', 'exists:suppliers,id'],
-            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'sort' => ['sometimes', Rule::in(['name', 'sku', 'price', 'created_at'])],
-            'direction' => ['sometimes', Rule::in(['asc', 'desc'])],
+            'has_products' => ['sometimes', 'boolean'],
         ];
     }
 

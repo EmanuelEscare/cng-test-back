@@ -19,9 +19,17 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $sort = (string) ($filters['sort'] ?? 'created_at');
         $direction = (string) ($filters['direction'] ?? 'desc');
+        $supplierId = isset($filters['supplier_id']) ? (int) $filters['supplier_id'] : null;
+        $hasSupplierActiveFilter = array_key_exists('is_active', $filters);
 
         return Product::query()
             ->with('activePromotion')
+            ->when(
+                $supplierId !== null,
+                fn (Builder $query): Builder => $query->with([
+                    'suppliers' => fn ($query) => $query->whereKey($supplierId),
+                ]),
+            )
             ->withExists([
                 'promotions as has_active_promotion' => fn (Builder $query): Builder => $query->active(),
             ])
@@ -33,6 +41,21 @@ class ProductRepository implements ProductRepositoryInterface
                         ->orWhere('sku', 'like', "%{$search}%")
                         ->orWhere('description', 'like', "%{$search}%");
                 }),
+            )
+            ->when(
+                $supplierId !== null || $hasSupplierActiveFilter,
+                fn (Builder $query): Builder => $query->whereHas(
+                    'suppliers',
+                    function (Builder $query) use ($filters, $hasSupplierActiveFilter, $supplierId): void {
+                        if ($supplierId !== null) {
+                            $query->whereKey($supplierId);
+                        }
+
+                        if ($hasSupplierActiveFilter) {
+                            $query->where('product_supplier.is_active', (bool) $filters['is_active']);
+                        }
+                    },
+                ),
             )
             ->orderBy($sort, $direction)
             ->paginate($perPage)
