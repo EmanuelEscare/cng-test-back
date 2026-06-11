@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -15,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $description
  * @property string $price
  * @property string $currency
+ * @property bool|null $has_active_promotion
+ * @property-read ProductPromotion|null $activePromotion
  * @property-read \Illuminate\Database\Eloquent\Collection<int, ProductPromotion> $promotions
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Supplier> $suppliers
  */
@@ -54,6 +57,16 @@ class Product extends Model
     public function promotions(): HasMany
     {
         return $this->hasMany(ProductPromotion::class);
+    }
+
+    /**
+     * Get the currently active promotion for the product.
+     */
+    public function activePromotion(): HasOne
+    {
+        return $this->hasOne(ProductPromotion::class)
+            ->active()
+            ->latestOfMany();
     }
 
     /**
