@@ -174,16 +174,19 @@ class ProductCatalogSeeder extends Seeder
                 'promotion' => '15% de descuento en cafe de temporada',
                 'promotion_started_at' => now()->subDays(3),
                 'promotion_ends_at' => now()->addDays(14),
+                'discount_percentage' => 15,
             ],
             'CHO-ART-70' => [
-                'promotion' => '2x1 en la segunda barra seleccionada',
+                'promotion' => '20% de descuento en chocolate artesanal',
                 'promotion_started_at' => now()->startOfDay(),
                 'promotion_ends_at' => now()->addDays(7)->endOfDay(),
+                'discount_percentage' => 20,
             ],
             'KIT-GOU-001' => [
-                'promotion' => 'Envio gratis en kit gourmet',
+                'promotion' => '10% de descuento en kit gourmet',
                 'promotion_started_at' => now()->subDay(),
                 'promotion_ends_at' => now()->addDays(10),
+                'discount_percentage' => 10,
             ],
         ];
 

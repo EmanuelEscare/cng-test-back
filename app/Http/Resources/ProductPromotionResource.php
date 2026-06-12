@@ -20,6 +20,7 @@ class ProductPromotionResource extends JsonResource
         return [
             'id' => $this->id,
             'promotion' => $this->promotion,
+            'discount_percentage' => $this->discount_percentage,
             'promotion_started_at' => $this->promotion_started_at?->toISOString(),
             'promotion_ends_at' => $this->promotion_ends_at?->toISOString(),
             'is_active' => $this->isActive(),

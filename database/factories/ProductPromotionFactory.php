@@ -31,12 +31,8 @@ class ProductPromotionFactory extends Factory
             'product_id' => Product::factory(),
             'promotion_started_at' => $startsAt,
             'promotion_ends_at' => fake()->dateTimeBetween($startsAt, '+1 month'),
-            'promotion' => fake()->randomElement([
-                '10% de descuento',
-                '2x1 por temporada',
-                'Envio gratis',
-                'Precio especial por volumen',
-            ]),
+            'promotion' => 'Discount promotion',
+            'discount_percentage' => fake()->randomElement([10, 15, 20, 25]),
         ];
     }
 }
